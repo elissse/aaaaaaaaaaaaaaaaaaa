@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Windows.Threading;
 
 namespace battleship_
@@ -9,6 +9,7 @@ namespace battleship_
         DispatcherTimer timer;
         DateTime startTime;
         string time = "";
+
         /* string sampleMap = @"
 **********
 *XXXX***X*
@@ -21,11 +22,12 @@ XX*XX***XX
 *X********
 **********
 "; */
+        int currentPlayer;
         public MapVM OurMap { get; private set; }
         public MapVM EnemyMap { get; private set; }
         public bool IsEnemyMap(MapVM map)
         {
-            if (map==OurMap) return false;
+            if (map == OurMap) return false;
             return true;
         }
 
@@ -34,34 +36,23 @@ XX*XX***XX
             get => time;
             private set => Set(ref time, value);
         }
-
+        
+        
         public BattleShiVM()
         {
             timer = new DispatcherTimer();
-            Start();
             timer.Interval = TimeSpan.FromMilliseconds(100);
             timer.Tick += Timer_Tick;
-
+            Start();
+            
             OurMap = new MapVM();
-            OurMap.SetShips(
-                new ShipVM { Rang = 4, Pos = (1, 1) },
-                new ShipVM { Rang = 3, Pos = (6, 1), Direct = DirectionShip.vertical, },
-                new ShipVM { Rang = 3, Pos = (8, 1), Direct = DirectionShip.vertical, },
-                new ShipVM { Rang = 2, Pos = (1, 3) },
-                new ShipVM { Rang = 2, Pos = (1, 5), },
-                new ShipVM { Rang = 2, Pos = (7, 5), Direct = DirectionShip.vertical, },
-                new ShipVM { Rang = 1, Pos = (0, 7) },
-                new ShipVM { Rang = 1, Pos = (2, 7) },
-                new ShipVM { Rang = 1, Pos = (4, 7) },
-                new ShipVM { Rang = 1, Pos = (8, 9) }
-                );
-
+            OurMap.FillMap(0, 4, 3, 2, 1);
             EnemyMap = new MapVM();
-            EnemyMap.FillMap(0,4,3,2,1);
- 
+            EnemyMap.FillMap(0, 4, 3, 2, 1);
+
         }
-        
-        
+
+
 
         private void Timer_Tick(object sender, EventArgs e)
         {
@@ -73,7 +64,10 @@ XX*XX***XX
         {
             OurMap[x, y].ToShoot();
         }
-
+        internal void ShotEnemyMap(int x, int y)
+        {
+            EnemyMap[x, y].ToShoot();
+        }
 
         public void Start()
         {
